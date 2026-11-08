@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aerial Client</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+:root{--bg:#080b10;--surface:#111820;--surface2:#18232d;--line:#273540;--muted:#a3b0bc;--white:#f5f8fa;--green:#9bf00b;--blue:#48b5ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--white);font-family:Inter,system-ui,sans-serif}
+.app{max-width:1440px;margin:auto;min-height:100vh}
+header{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 34px;border-bottom:1px solid #202a33;background:#0b1016;position:sticky;top:0;z-index:5}
+.brand{display:flex;align-items:center;gap:11px;font-weight:900;font-size:22px;letter-spacing:-.8px}.logo{width:36px;height:36px;border-radius:10px;background:var(--green);color:#142000;display:grid;place-items:center;font-weight:900;font-size:22px}
+nav{display:flex;gap:27px;margin-left:40px;margin-right:auto}nav a{color:#c2cbd2;text-decoration:none;font-size:13px;font-weight:700}nav a.active,nav a:hover{color:var(--green)}
+.profile{font-size:12px;color:#d2dbe1;border:1px solid var(--line);border-radius:30px;padding:9px 13px}
+main{padding:28px 34px 60px}
+.eyebrow{font-size:11px;letter-spacing:1.5px;color:var(--green);font-weight:800;text-transform:uppercase}
+.hero{min-height:310px;border-radius:18px;overflow:hidden;position:relative;padding:34px;display:flex;align-items:flex-end;background:linear-gradient(90deg,rgba(4,10,16,.97),rgba(4,10,16,.72) 48%,rgba(4,10,16,.1)),radial-gradient(circle at 78% 35%,#347a7a,#244e6a 25%,#172c41 48%,#101922 70%)}
+.hero:after{content:"☁";position:absolute;right:10%;top:20px;font-size:180px;color:#b8e7ff22;font-weight:900}
+.hero-content{position:relative;z-index:1;max-width:540px}.hero h1{font-size:clamp(34px,5vw,56px);line-height:1.02;margin:10px 0;letter-spacing:-2px}.hero p{color:#c1cbd2;line-height:1.6;max-width:470px;font-size:14px}
+.btn{border:0;border-radius:7px;padding:12px 17px;font-weight:800;font-size:13px;cursor:pointer;background:var(--green);color:#142000;font-family:inherit}.btn:hover{filter:brightness(1.08)}.btn:disabled{opacity:.45;cursor:not-allowed}.btn.secondary{background:#26333d;color:#f4f7f8;border:1px solid #3b4a56}.btn.blue{background:#237fbd;color:white}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.section{margin-top:32px}.section-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:15px;gap:12px}.section h2{font-size:21px;margin:0;letter-spacing:-.5px}.section-head p{color:var(--muted);font-size:12px;margin:5px 0 0}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.game-card{background:var(--surface);border:1px solid #202d37;border-radius:13px;overflow:hidden;transition:transform .15s,border-color .15s}.game-card:hover{transform:translateY(-3px);border-color:#526573}
+.art{height:145px;display:flex;align-items:center;justify-content:center;font-size:66px;position:relative;background:linear-gradient(135deg,#1c4660,#152536)}.art.fortnite{background:linear-gradient(135deg,#315f9d,#6b3e8c)}.art.rocket{background:linear-gradient(135deg,#a34c25,#1c4c76)}.art.dino{background:linear-gradient(135deg,#d7f1fa,#b3e0d2)}
+.art .pill{position:absolute;top:12px;left:12px;background:#0b111bdc;color:#dce7ed;border-radius:4px;padding:5px 8px;font-size:9px;font-weight:800;letter-spacing:.7px}
+.card-info{padding:15px}.card-info h3{margin:0 0 6px;font-size:17px}.card-info p{margin:0;color:var(--muted);font-size:12px;line-height:1.45;min-height:34px}.provider-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}.provider{border:1px solid #465560;background:#202c36;color:#f4f7f8;border-radius:6px;padding:8px 10px;font-size:11px;font-weight:800;cursor:pointer;font-family:inherit}.provider:hover{border-color:var(--green);color:var(--green)}.provider.xbox:before{content:"▦ ";color:var(--green)}.provider.gfn:before{content:"◉ ";color:#8cc63e}
+.two{display:grid;grid-template-columns:1.2fr .8fr;gap:15px}.panel{background:var(--surface);border:1px solid #202d37;border-radius:13px;padding:20px}.panel h2{font-size:19px;margin:0 0 7px}.muted{font-size:12px;color:var(--muted);line-height:1.55}
+.timerline{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:14px}.clock{font-size:39px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-1.5px}.status{font-size:12px;color:var(--green)}.bar{height:6px;background:#27333d;border-radius:9px;margin-top:12px;overflow:hidden}.bar span{display:block;height:100%;width:100%;background:var(--green);transition:width .3s}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px;align-items:center}
+.dino-panel{margin-top:15px}.dino-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.score{color:var(--green);font-size:12px;font-weight:800}.canvas-wrap{margin-top:13px;border-radius:9px;overflow:hidden;background:#e9f8ff}.canvas-wrap canvas{width:100%;height:auto;aspect-ratio:900/175;display:block;touch-action:manipulation}
+footer{text-align:center;color:#72818d;font-size:11px;padding:26px}
+@media(max-width:800px){header{padding:0 16px}nav{gap:12px;margin-left:18px}main{padding:20px 16px 45px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.two{grid-template-columns:1fr}.hero{min-height:280px;padding:23px}}
+@media(max-width:520px){nav{display:none}.cards{grid-template-columns:1fr}.art{height:125px}.profile{font-size:10px}.hero:after{right:2%;font-size:120px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+ <div class="brand"><div class="logo">A</div>AERIAL</div>
+ <nav><a class="active" href="#home">Home</a><a href="#library">My games</a><a href="#play">Play</a><a href="#waiting">Waiting room</a></nav>
+ <div class="profile">☁ CHROMEBOOK CLOUD</div>
+</header>
+<main id="home">
+ <section class="hero">
+  <div class="hero-content"><div class="eyebrow">YOUR CLOUD GAMING HOME</div><h1>Play your way.</h1><p>One library for your cloud games. Pick a title, choose an available streaming service, and jump in.</p><button class="btn" onclick="document.getElementById('library').scrollIntoView({behavior:'smooth'})">Browse games ↓</button></div>
+ </section>
+
+ <section class="section" id="library">
+  <div class="section-head"><div><h2>My games</h2><p>Choose a game, then select where you want to play it.</p></div><span class="eyebrow">YOUR LIBRARY</span></div>
+  <div class="cards">
+   <article class="game-card">
+    <div class="art fortnite"><span class="pill">CLOUD GAME</span>🏝️</div>
+    <div class="card-info"><h3>Fortnite</h3><p>Choose a cloud service to launch Fortnite.</p><div class="provider-row"><button class="provider xbox" onclick="launch('xbox','Fortnite')">Xbox Cloud</button><button class="provider gfn" onclick="launch('gfn','Fortnite')">GeForce NOW</button></div></div>
+   </article>
+   <article class="game-card">
+    <div class="art rocket"><span class="pill">CLOUD GAME</span>🚗</div>
+    <div class="card-info"><h3>Rocket League</h3><p>Choose a cloud service to launch Rocket League.</p><div class="provider-row"><button class="provider xbox" onclick="launch('xbox','Rocket League')">Xbox Cloud</button><button class="provider gfn" onclick="launch('gfn','Rocket League')">GeForce NOW</button></div></div>
+   </article>
+   <article class="game-card">
+    <div class="art dino"><span class="pill">OFFLINE · IN AERIAL</span>🦖</div>
+    <div class="card-info"><h3>Dino Run</h3><p>Play instantly in Aerial while waiting. No cloud service needed.</p><div class="provider-row"><button class="provider" onclick="document.getElementById('waiting').scrollIntoView({behavior:'smooth'})">Play here ↓</button></div></div>
+   </article>
+  </div>
+ </section>
+
+ <section class="section two" id="play">
+  <div class="panel"><div class="eyebrow">SESSION TOOLS</div><h2>Session countdown</h2><p class="muted">Start this when your cloud session begins. Aerial will remind you when five minutes remain.</p>
+   <div class="timerline"><div class="clock" id="clock">60:00</div><div class="status" id="timerStatus">Ready to start</div></div>
+   <div class="bar"><span id="progress"></span></div>
+   <div class="actions"><button class="btn" id="startTimer">Start 1-hour timer</button><button class="btn secondary" id="resetTimer">Reset</button><button class="btn secondary" id="reconnect" disabled>Quick reconnect ↗</button></div>
+   <p class="muted" id="timerHint" style="margin-bottom:0">The timer is a reminder only. It cannot extend a provider session or skip its queue.</p>
+  </div>
+  <div class="panel"><div class="eyebrow">CLOUD SERVICES</div><h2>Choose a service</h2><p class="muted">Your game opens on the provider's official website. Sign in there if needed.</p><div class="actions"><button class="btn" onclick="window.open('https://www.xbox.com/play','_blank','noopener')">Xbox Cloud Gaming ↗</button><button class="btn secondary" onclick="window.open('https://play.geforcenow.com/','_blank','noopener')">GeForce NOW ↗</button></div><p class="muted">Provider queues, subscriptions, supported games, and session limits still apply.</p></div>
+ </section>
+
+ <section class="panel dino-panel" id="waiting">
+  <div class="dino-top"><div><div class="eyebrow">WAITING ROOM</div><h2 style="margin:5px 0">Dino Run</h2><div class="muted">An offline mini-game while your cloud game loads.</div></div><div class="score">SCORE <span id="score">0</span> &nbsp; BEST <span id="best">0</span></div></div>
+  <div class="canvas-wrap"><canvas id="game" width="900" height="175" aria-label="Dino running game"></canvas></div>
+  <div class="actions"><button class="btn" id="playDino">Start game</button><button class="btn secondary" id="jumpDino">Jump / Tap</button><button class="btn secondary" id="duckDino">Duck</button><span class="muted">Space / ↑ to jump · ↓ to duck under low-flying planes · tap to jump.</span></div>
+ </section>
+</main>
+<footer>Aerial Client is an independent launcher concept and is not affiliated with Xbox or NVIDIA.</footer>
+</div>
+<script>
+const URLS={xbox:'https://www.xbox.com/play',gfn:'https://play.geforcenow.com/'};
+let lastProvider='gfn';
+function launch(provider,game){lastProvider=provider;window.open(URLS[provider],'_blank','noopener');}
+let remaining=3600,timerId=null,total=3600;
+const clock=document.getElementById('clock'),statusEl=document.getElementById('timerStatus'),hint=document.getElementById('timerHint'),progress=document.getElementById('progress'),reconnect=document.getElementById('reconnect'),startBtn=document.getElementById('startTimer');
+function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function paint(){clock.textContent=fmt(remaining);progress.style.width=(remaining/total*100)+'%'}
+function tick(){remaining=Math.max(0,remaining-1);paint();if(remaining===300){statusEl.textContent='5 minutes left';hint.textContent='Five minutes left — save your progress soon.'}if(remaining===0){clearInterval(timerId);timerId=null;statusEl.textContent='Timer ended';hint.textContent='Timer ended. Press Quick reconnect to reopen your selected cloud service. You may need to wait in its queue again.';reconnect.disabled=false;startBtn.textContent='Start another timer'}}
+startBtn.addEventListener('click',()=>{if(timerId)return;if(remaining===0){remaining=3600;total=3600;paint()}statusEl.textContent='Timer running';hint.textContent='Keep this Aerial tab open for the countdown.';reconnect.disabled=false;startBtn.textContent='Timer running';timerId=setInterval(tick,1000)});
+document.getElementById('resetTimer').addEventListener('click',()=>{if(timerId)clearInterval(timerId);timerId=null;remaining=3600;total=3600;paint();statusEl.textContent='Ready to start';hint.textContent='Start this when your cloud session begins.';reconnect.disabled=true;startBtn.textContent='Start 1-hour timer'});
+reconnect.addEventListener('click',()=>window.open(URLS[lastProvider],'_blank','noopener'));paint();
+
+// Dino runner: cactus clusters, flying planes, ducking, and gradual acceleration
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+const scoreEl=document.getElementById('score'),bestEl=document.getElementById('best');
+let running=false,over=false,score=0,best=0;
+try{best=Number(localStorage.getItem('aerialDinoBest')||0);}catch(e){}
+let speed=5.2,frame=0,obstacles=[],ducking=false,night=false;
+bestEl.textContent=best;
+const ground=145;
+const dino={x:75,y:ground-42,w:44,h:42,vy:0,jumping:false};
+function resetGame(){
+  score=0;speed=5.2;frame=0;obstacles=[];ducking=false;
+  dino.y=ground-dino.h;dino.vy=0;dino.jumping=false;
+  over=false;running=true;night=false;
+  scoreEl.textContent='0';document.getElementById('playDino').textContent='Restart game';
+}
+function jump(){
+  if(!running){resetGame();}
+  if(!dino.jumping&&!ducking){dino.vy=-12.4;dino.jumping=true;}
+}
+function setDuck(v){ducking=v&&!dino.jumping;}
+document.getElementById('playDino').addEventListener('click',function(){resetGame();this.blur();});
+document.getElementById('jumpDino').addEventListener('click',function(){jump();this.blur();});
+const duckBtn=document.getElementById('duckDino');
+duckBtn.addEventListener('pointerdown',function(e){e.preventDefault();setDuck(true);});
+['pointerup','pointerleave','pointercancel'].forEach(function(ev){duckBtn.addEventListener(ev,function(){setDuck(false);});});
+document.addEventListener('keydown',function(e){
+  if(e.code==='Space'||e.code==='ArrowUp'){
+    if(document.activeElement.tagName==='SELECT')return;
+    e.preventDefault();
+    if(!e.repeat)jump();
+  }
+  if(e.code==='ArrowDown'){e.preventDefault();setDuck(true);}
+});
+document.addEventListener('keyup',function(e){if(e.code==='ArrowDown')setDuck(false);});
+canvas.addEventListener('pointerdown',jump);
+
+function drawCactus(x,y,w,h){
+  ctx.fillStyle='#27864b';
+  ctx.fillRect(x+w*.36,y,w*.3,h);
+  ctx.fillRect(x+w*.16,y+h*.34,w*.22,h*.12);
+  ctx.fillRect(x+w*.16,y+h*.20,w*.12,h*.25);
+  ctx.fillRect(x+w*.64,y+h*.48,w*.22,h*.12);
+  ctx.fillRect(x+w*.74,y+h*.30,w*.12,h*.3);
+  ctx.fillStyle='#52b86c';
+  ctx.fillRect(x+w*.42,y+3,w*.07,h-6);
+}
+function drawPlane(x,y){
+  ctx.save();ctx.translate(x,y);ctx.fillStyle='#e28b36';ctx.strokeStyle='#9b5427';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(0,12);ctx.lineTo(17,9);ctx.lineTo(27,0);ctx.lineTo(33,0);ctx.lineTo(29,9);
+  ctx.lineTo(52,10);ctx.lineTo(60,5);ctx.lineTo(64,6);ctx.lineTo(59,13);ctx.lineTo(64,18);
+  ctx.lineTo(60,19);ctx.lineTo(52,15);ctx.lineTo(29,16);ctx.lineTo(33,24);ctx.lineTo(27,24);
+  ctx.lineTo(17,16);ctx.lineTo(0,14);ctx.closePath();ctx.fill();ctx.stroke();
+  ctx.fillStyle='#fff2ce';ctx.fillRect(8,11,5,2);ctx.restore();
+}
+function drawDino(){
+  const h=ducking?27:42, y=ground-h, x=dino.x;
+  ctx.fillStyle='#343a40';
+  if(ducking){
+    ctx.fillRect(x+4,y+8,35,17);ctx.fillRect(x+29,y+2,14,14);
+    ctx.fillRect(x+1,y+13,8,5);ctx.fillRect(x+11,y+23,7,4);ctx.fillRect(x+29,y+23,7,4);
+  }else{
+    const dy=dino.y;
+    ctx.fillRect(x+14,dy+11,22,23);ctx.fillRect(x+27,dy+2,16,17);
+    ctx.fillRect(x+35,dy+13,10,5);ctx.fillRect(x+8,dy+20,10,8);
+    ctx.fillRect(x+2,dy+24,10,4);ctx.fillRect(x+19,dy+32,7,10);
+    ctx.fillRect(x+31,dy+32,7,10);ctx.fillRect(x+12,dy+16,5,4);
+    ctx.fillStyle='#fff';ctx.fillRect(x+38,dy+7,3,3);
+    ctx.fillStyle='#343a40';ctx.fillRect(x+23,dy+20,5,3);
+  }
+}
+function draw(){
+  const sky=night?'#17212a':'#e9f8ff',groundColor=night?'#a9b8c3':'#6b9f91';
+  ctx.clearRect(0,0,900,175);ctx.fillStyle=sky;ctx.fillRect(0,0,900,175);
+  ctx.fillStyle=night?'#53616c':'#b9e5f7';
+  for(let i=0;i<3;i++){let x=((i*330-frame*speed*.18)%980+980)%980-40;ctx.beginPath();ctx.arc(x,34,12,0,7);ctx.arc(x+14,30,16,0,7);ctx.arc(x+30,36,11,0,7);ctx.fill();}
+  ctx.fillStyle=groundColor;ctx.fillRect(0,ground,900,2);
+  ctx.fillStyle=night?'#66747d':'#a2c9bd';
+  for(let i=0;i<20;i++){let x=((i*50-frame*speed*.65)%950+950)%950;ctx.fillRect(x,ground+12,17,2);}
+  obstacles.forEach(function(o){if(o.type==='plane')drawPlane(o.x,o.y);else drawCactus(o.x,o.y,o.w,o.h);});
+  drawDino();
+  if(!running){
+    ctx.fillStyle=night?'#fff':'#23445a';ctx.font='bold 19px system-ui';ctx.textAlign='center';
+    ctx.fillText(over?'Game over — press Play again':'Press Start game to play',450,85);
+  }
+}
+function spawnObstacle(){
+  const canPlane=score>260&&Math.random()<0.34;
+  if(canPlane){
+    const heights=[ground-66,ground-83,ground-49];
+    obstacles.push({type:'plane',x:920,y:heights[Math.floor(Math.random()*heights.length)],w:64,h:24});
+  }else{
+    const count=1+(Math.random()<.35?1:0)+(Math.random()<.12?1:0);
+    const size= count===1?23:count===2?43:62;
+    const h= count===1?37:count===2?42:48;
+    obstacles.push({type:'cactus',x:920,y:ground-h,w:size,h:h});
+  }
+}
+function loop(){
+  if(running){
+    frame++;
+    score+=speed*.12;
+    speed=Math.min(13.2,5.2+score*.0017);
+    scoreEl.textContent=Math.floor(score);
+    if(frame%Math.max(42,Math.floor(92-speed*2.2))===0)spawnObstacle();
+    obstacles.forEach(function(o){o.x-=speed;});
+    obstacles=obstacles.filter(function(o){return o.x+(o.w||64)>-5;});
+    if(!ducking){
+      dino.vy+=.62;dino.y+=dino.vy;
+      if(dino.y>=ground-dino.h){dino.y=ground-dino.h;dino.vy=0;dino.jumping=false;}
+    }else{dino.y=ground-27;}
+    const dh=ducking?24:34, dy=ducking?ground-26:dino.y+6;
+    for(const o of obstacles){
+      const oy=o.y+3, oh=o.type==='plane'?17:o.h-5;
+      if(dino.x+35>o.x+5&&dino.x+9<o.x+(o.w||64)-5&&dy+dh>oy&&dy+4<oy+oh){
+        running=false;over=true;ducking=false;
+        const finalScore=Math.floor(score);
+        if(finalScore>best){best=finalScore;try{localStorage.setItem('aerialDinoBest',best);}catch(e){}bestEl.textContent=best;}
+        document.getElementById('playDino').textContent='Play again';break;
+      }
+    }
+    night=(Math.floor(score/700)%2)===1;
+  }
+  draw();requestAnimationFrame(loop);
+}
+loop();
+</script>
+</body></html>
