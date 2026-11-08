@@ -22,7 +22,7 @@ main{padding:28px 34px 60px}
 .section{margin-top:32px}.section-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:15px;gap:12px}.section h2{font-size:21px;margin:0;letter-spacing:-.5px}.section-head p{color:var(--muted);font-size:12px;margin:5px 0 0}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:15px}
 .game-card{background:var(--surface);border:1px solid #202d37;border-radius:13px;overflow:hidden;transition:transform .15s,border-color .15s}.game-card:hover{transform:translateY(-3px);border-color:#526573}
-.art{height:160px;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:66px;position:relative;background:linear-gradient(135deg,#1c4660,#152536)}.art.fortnite{background:linear-gradient(135deg,#315f9d,#6b3e8c)}.art.rocket{background:linear-gradient(135deg,#a34c25,#1c4c76)}.art.dino{background:#fff}.art.cod{background:linear-gradient(135deg,#2b3a2f,#1b1f24 60%,#c4571d)}.art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.art.dino img{object-fit:contain}.art .pill{z-index:1}.art.cod img{object-position:50% 38%}#viewer{position:fixed;inset:0;z-index:50;background:#05080c;display:none;flex-direction:column}#viewer.on{display:flex}.vbar{display:flex;align-items:center;gap:8px;padding:calc(8px + env(safe-area-inset-top,0px)) 12px 8px;background:#0b1016;border-bottom:1px solid #202a33;flex-wrap:wrap}.vbar strong{font-size:13px;margin-left:6px}.vsp{flex:1}.vbar .btn{padding:8px 12px;font-size:12px}.vhint{font-size:11px;color:var(--muted);padding:6px 14px;background:#0b1016;border-bottom:1px solid #202a33}.vstage{flex:1;position:relative}.vstage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+.art{height:160px;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:66px;position:relative;background:linear-gradient(135deg,#1c4660,#152536)}.art.fortnite{background:linear-gradient(135deg,#315f9d,#6b3e8c)}.art.rocket{background:linear-gradient(135deg,#a34c25,#1c4c76)}.art.dino{background:#fff}.art.cod{background:linear-gradient(135deg,#2b3a2f,#1b1f24 60%,#c4571d)}.art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.art.dino img{object-fit:contain}.art .pill{z-index:1}.art.cod img{object-position:50% 38%}
 .art .pill{position:absolute;top:12px;left:12px;background:#0b111bdc;color:#dce7ed;border-radius:4px;padding:5px 8px;font-size:9px;font-weight:800;letter-spacing:.7px}
 .card-info{padding:15px}.card-info h3{margin:0 0 6px;font-size:17px}.card-info p{margin:0;color:var(--muted);font-size:12px;line-height:1.45;min-height:34px}.provider-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}.provider{border:1px solid #465560;background:#202c36;color:#f4f7f8;border-radius:6px;padding:8px 10px;font-size:11px;font-weight:800;cursor:pointer;font-family:inherit}.provider:hover{border-color:var(--green);color:var(--green)}.provider.xbox:before{content:"▦ ";color:var(--green)}.provider.gfn:before{content:"◉ ";color:#8cc63e}
 .two{display:grid;grid-template-columns:1.2fr .8fr;gap:15px}.panel{background:var(--surface);border:1px solid #202d37;border-radius:13px;padding:20px}.panel h2{font-size:19px;margin:0 0 7px}.muted{font-size:12px;color:var(--muted);line-height:1.55}
@@ -74,7 +74,7 @@ footer{text-align:center;color:#72818d;font-size:11px;padding:26px}
    <div class="actions"><button class="btn" id="startTimer">Start 1-hour timer</button><button class="btn secondary" id="resetTimer">Reset</button><button class="btn secondary" id="reconnect" disabled>Quick reconnect ↗</button></div>
    <p class="muted" id="timerHint" style="margin-bottom:0">The timer is a reminder only. It cannot extend a provider session or skip its queue.</p>
   </div>
-  <div class="panel"><div class="eyebrow">CLOUD SERVICES</div><h2>Choose a service</h2><p class="muted">Services open inside Aerial. Sign in there if needed. If a service stays blank, it blocks embedding: use App window or New tab in the top bar.</p><div class="actions"><button class="btn" onclick="launch('xbox','')">Xbox Cloud Gaming</button><button class="btn secondary" onclick="launch('gfn','')">GeForce NOW</button></div><p class="muted">Provider queues, subscriptions, supported games, and session limits still apply.</p></div>
+  <div class="panel"><div class="eyebrow">CLOUD SERVICES</div><h2>Choose a service</h2><p class="muted">Services open in an Aerial app window. Sign in there if needed. If nothing opens, allow pop-ups for this site.</p><div class="actions"><button class="btn" onclick="launch('xbox','')">Xbox Cloud Gaming</button><button class="btn secondary" onclick="launch('gfn','')">GeForce NOW</button></div><p class="muted">Provider queues, subscriptions, supported games, and session limits still apply.</p></div>
  </section>
 
  <section class="panel dino-panel" id="waiting">
@@ -83,39 +83,23 @@ footer{text-align:center;color:#72818d;font-size:11px;padding:26px}
   <div class="actions"><button class="btn" id="playDino">Start game</button><button class="btn secondary" id="jumpDino">Jump / Tap</button><button class="btn secondary" id="duckDino">Duck</button><span class="muted">Space / ↑ to jump · ↓ to duck under low-flying planes · tap to jump.</span></div>
  </section>
 </main>
-<div id="viewer" role="dialog" aria-label="Cloud gaming viewer">
- <div class="vbar"><button class="btn secondary" id="vBack">← Back to Aerial</button><strong id="vTitle"></strong><span class="vsp"></span><button class="btn secondary" id="vFs">Fullscreen</button><button class="btn secondary" id="vPop">App window ↗</button><button class="btn secondary" id="vTab">New tab ↗</button></div>
- <div class="vhint">Loading inside Aerial. If this stays blank or shows a refused-to-connect message, the service does not allow being embedded. Use App window or New tab.</div>
- <div class="vstage"><iframe id="vFrame" title="Cloud gaming" allow="fullscreen; autoplay; gamepad; microphone; clipboard-write; keyboard-map; pointer-lock; screen-wake-lock"></iframe></div>
-</div>
 <footer>Aerial Client is an independent launcher concept and is not affiliated with Xbox or NVIDIA.</footer>
 </div>
 <script>
 const URLS={xbox:'https://www.xbox.com/play',gfn:'https://play.geforcenow.com/'};
-const NAMES={xbox:'Xbox Cloud Gaming',gfn:'GeForce NOW'};
 // Direct links to one specific game on a service (Warzone only for Call of Duty)
 const GAME_URLS={'Call of Duty: Warzone':{xbox:'https://www.xbox.com/play/games/call-of-duty-warzone/9NNFG8BQRCXL'}};
-let lastUrl=URLS.gfn,lastTitle=NAMES.gfn;
-const viewer=document.getElementById('viewer'),vFrame=document.getElementById('vFrame'),vTitle=document.getElementById('vTitle');
-function openViewer(url,title){
-  lastUrl=url;lastTitle=title;vTitle.textContent=title;vFrame.src=url;
-  viewer.classList.add('on');document.body.style.overflow='hidden';
-}
-function closeViewer(){
-  viewer.classList.remove('on');vFrame.src='about:blank';document.body.style.overflow='';
-  if(document.fullscreenElement)document.exitFullscreen();
+let lastUrl=URLS.gfn;
+// Opens the cloud service in a small app-style window (no tabs or address bar)
+function openApp(url){
+  lastUrl=url;
+  const w=1280,h=760,l=Math.max(0,Math.round((screen.width-w)/2)),t=Math.max(0,Math.round((screen.height-h)/2));
+  window.open(url,'aerial-cloud','popup=yes,noopener,width='+w+',height='+h+',left='+l+',top='+t);
 }
 function launch(provider,game){
   const g=GAME_URLS[game];
-  openViewer((g&&g[provider])||URLS[provider],(game?game+' · ':'')+NAMES[provider]);
+  openApp((g&&g[provider])||URLS[provider]);
 }
-document.getElementById('vBack').addEventListener('click',closeViewer);
-document.getElementById('vTab').addEventListener('click',()=>window.open(lastUrl,'_blank','noopener'));
-document.getElementById('vPop').addEventListener('click',()=>window.open(lastUrl,'aerial-cloud','popup=yes,noopener,width=1280,height=760'));
-document.getElementById('vFs').addEventListener('click',()=>{
-  if(document.fullscreenElement)document.exitFullscreen();
-  else if(viewer.requestFullscreen)viewer.requestFullscreen();
-});
 let remaining=3600,timerId=null,total=3600;
 const clock=document.getElementById('clock'),statusEl=document.getElementById('timerStatus'),hint=document.getElementById('timerHint'),progress=document.getElementById('progress'),reconnect=document.getElementById('reconnect'),startBtn=document.getElementById('startTimer');
 function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
@@ -123,7 +107,7 @@ function paint(){clock.textContent=fmt(remaining);progress.style.width=(remainin
 function tick(){remaining=Math.max(0,remaining-1);paint();if(remaining===300){statusEl.textContent='5 minutes left';hint.textContent='Five minutes left — save your progress soon.'}if(remaining===0){clearInterval(timerId);timerId=null;statusEl.textContent='Timer ended';hint.textContent='Timer ended. Press Quick reconnect to reopen your selected cloud service. You may need to wait in its queue again.';reconnect.disabled=false;startBtn.textContent='Start another timer'}}
 startBtn.addEventListener('click',()=>{if(timerId)return;if(remaining===0){remaining=3600;total=3600;paint()}statusEl.textContent='Timer running';hint.textContent='Keep this Aerial tab open for the countdown.';reconnect.disabled=false;startBtn.textContent='Timer running';timerId=setInterval(tick,1000)});
 document.getElementById('resetTimer').addEventListener('click',()=>{if(timerId)clearInterval(timerId);timerId=null;remaining=3600;total=3600;paint();statusEl.textContent='Ready to start';hint.textContent='Start this when your cloud session begins.';reconnect.disabled=true;startBtn.textContent='Start 1-hour timer'});
-reconnect.addEventListener('click',()=>openViewer(lastUrl,lastTitle));paint();
+reconnect.addEventListener('click',()=>openApp(lastUrl));paint();
 
 // Dino runner: cactus clusters, flying planes, ducking, and gradual acceleration
 const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
