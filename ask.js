@@ -2,7 +2,7 @@
 // Paste the address of your Cloudflare Worker (worker.js) below.
 (function () {
   'use strict';
-  const WORKER_URL = 'https://aerial-ai.aerialss.workers.dev/';
+const WORKER_URL = 'https://aerial-ai.aerialss.workers.dev/';
 
   const $ = id => document.getElementById(id);
   const log = $('log'), chat = $('chat'), box = $('msg'), sendBtn = $('send'), form = $('form');
@@ -88,5 +88,8 @@
     box.style.height = Math.min(box.scrollHeight, 180) + 'px';
   });
   document.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => send(b.textContent)));
+  $('back').addEventListener('click', () => {
+    if (document.referrer) history.back(); else location.href = 'aerial-client.html';
+  });
   $('new').addEventListener('click', () => { history = []; location.reload(); });
 })();
