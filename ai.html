@@ -9,7 +9,7 @@
 body{margin:0;background:var(--bg);color:var(--white);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;display:flex;flex-direction:column}
 header{background:#0b1016;border-bottom:1px solid var(--line);padding:14px clamp(14px,3vw,34px);display:flex;align-items:center;gap:14px}
 h1{font-size:19px;margin:0}
-#new{margin-left:auto;background:#26333d;color:var(--white);border:1px solid #3b4a56;border-radius:8px;padding:8px 14px;font-weight:700;font-size:13px;cursor:pointer}
+#back{background:#26333d;color:var(--white);border:1px solid #3b4a56;border-radius:8px;padding:8px 14px;font-weight:700;font-size:13px;cursor:pointer}#new{margin-left:auto;background:#26333d;color:var(--white);border:1px solid #3b4a56;border-radius:8px;padding:8px 14px;font-weight:700;font-size:13px;cursor:pointer}
 #chat{flex:1;overflow:auto;padding:22px clamp(14px,3vw,34px)}
 .wrap{max-width:820px;margin:auto}
 .bubble{max-width:88%;padding:11px 14px;border-radius:14px;margin:0 0 12px;line-height:1.55;font-size:14.5px;white-space:pre-wrap;word-wrap:break-word}
@@ -30,7 +30,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 </style>
 </head>
 <body>
-<header><h1>AI Assistant ✨</h1><button id="new">New chat</button></header>
+<header><button id="back">← Back</button><h1>AI Assistant ✨</h1><button id="new">New chat</button></header>
 <div id="chat" aria-live="polite"><div class="wrap" id="log">
   <div class="bubble bot">Hi! Ask me anything: questions, writing, code, homework, ideas, or just a chat.</div>
   <div class="chips" id="chips">
