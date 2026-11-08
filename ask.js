@@ -2,7 +2,7 @@
 // Paste the address of your Cloudflare Worker (worker.js) below.
 (function () {
   'use strict';
-  const WORKER_URL = 'PASTE_YOUR_WORKER_URL_HERE';
+  const WORKER_URL = 'https://aerial-ai.aerialss.workers.dev/';
 
   const $ = id => document.getElementById(id);
   const log = $('log'), chat = $('chat'), box = $('msg'), sendBtn = $('send'), form = $('form');
