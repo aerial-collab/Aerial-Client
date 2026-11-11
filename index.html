@@ -194,7 +194,7 @@ body.v-ai footer{display:none}
     <button class="tab" data-tab="anime">Anime</button>
     <button class="tab" data-tab="movie">Movies</button>
     <button class="tab" data-tab="tv">Series</button>
-    <button class="tab" data-tab="free">Free to watch</button>
+    
     
   </div>
   <input id="q" type="search" placeholder="Search…" aria-label="Search">
@@ -210,7 +210,7 @@ body.v-ai footer{display:none}
   <div id="grid" class="grid"></div>
   <div id="note" class="msg"></div>
   <button id="more" class="more" hidden>Load more</button>
-  <p class="attr">Movie and series data: this product uses the TMDB API but is not endorsed or certified by TMDB. Streaming availability: JustWatch, via TMDB. Free films are hosted by the Internet Archive, which sets their availability.</p>
+  <p class="attr">Movie and series data: this product uses the TMDB API but is not endorsed or certified by TMDB. Streaming availability: JustWatch, via TMDB.</p>
 </div>
 <div id="modal" role="dialog" aria-modal="true" aria-label="Details">
   <div class="sheet"><div class="back" id="back"></div><button class="close" id="close" aria-label="Close">✕</button><div class="body" id="detail"></div></div>
@@ -434,9 +434,8 @@ let tab='anime',mode='trending',page=1,totalPages=1,query='',genre='',current=nu
 const genreCache={};
 try{const r=localStorage.getItem('movies-region');if(r)$('region').value=r;}catch(e){}
 
-const TITLES={anime:['Anime','One Piece, JoJo\'s Bizarre Adventure, Naruto and Bleach. Each franchise is one entry with its series and films together.'],movie:['Trending movies this week','Popular right now. Click a movie for the trailer and where to watch it legally.'],
-  tv:['Trending series this week','Popular right now. Click a series for the trailer and where to watch it legally.'],
-  free:['Free to watch','Classic films from the Internet Archive that you can play right here.']};
+const TITLES={anime:['Anime','Official services where you can watch anime legally. Click one to open it.'],movie:['Trending movies this week','Popular right now. Click a movie for the trailer and where to watch it legally.'],
+  tv:['Trending series this week','Popular right now. Click a series for the trailer and where to watch it legally.']};
 
 function norm(m,type){return{id:m.id,type:type,title:m.title||m.name||'',date:m.release_date||m.first_air_date||'',poster:m.poster_path?IMG+'w342'+m.poster_path:'',rating:m.vote_average||0};}
 
@@ -446,7 +445,7 @@ function render(items,append){
     const b=document.createElement('button');b.className='card';
     b.innerHTML=(m.poster?'<img class="poster" loading="lazy" alt="" src="'+esc(m.poster)+'">':'<div class="noposter">'+esc(m.title)+'</div>')+
       '<div class="meta"><b>'+esc(m.title)+'</b><span>'+esc(m.date.slice(0,4))+(m.rating?' · ★ '+m.rating.toFixed(1):'')+'</span></div>';
-    b.addEventListener('click',()=>m.type==='anime'?openAnime(m.id):m.type==='free'?openFree(m):openDetail(m.id,m.type));
+    b.addEventListener('click',()=>m.type==='anime'?openService(m.id):openDetail(m.id,m.type));
     $('grid').appendChild(b);
   });
 }
@@ -456,15 +455,7 @@ async function load(append){
   try{
     let items=[];
     if(tab==='anime'){renderAnime();$('note').textContent='';$('more').hidden=true;return;}
-    if(tab==='free'){
-      const q='collection:feature_films AND mediatype:movies'+(query?' AND title:('+query.replace(/["():\\]/g,' ')+')':'');
-      const u=new URL('https://archive.org/advancedsearch.php');
-      u.searchParams.set('q',q);['identifier','title','year'].forEach(f=>u.searchParams.append('fl[]',f));
-      u.searchParams.set('sort[]','downloads desc');u.searchParams.set('rows','24');u.searchParams.set('page',page);u.searchParams.set('output','json');
-      const r=await fetch(u);if(!r.ok)throw new Error('IA '+r.status);
-      const d=(await r.json()).response;totalPages=Math.ceil(d.numFound/24);
-      items=d.docs.map(x=>({id:x.identifier,type:'free',title:Array.isArray(x.title)?x.title[0]:(x.title||x.identifier),date:String(x.year||''),poster:'https://archive.org/services/img/'+encodeURIComponent(x.identifier),rating:0}));
-    }else{
+    {
       if(!HAS_KEY){$('note').textContent='Add your TMDB API key at the top of the script in movies.html to see movies and series.';$('more').hidden=true;return;}
       let d;
       if(mode==='search')d=await tmdb('/search/'+tab,{query:query,page:page,include_adult:'false'});
@@ -475,12 +466,12 @@ async function load(append){
     render(items,append);
     $('note').textContent=items.length||append?'':'Nothing found.';
     $('more').hidden=page>=totalPages;
-  }catch(e){$('note').textContent='Could not load this list. Check your connection'+(tab==='free'?'.':' and TMDB key.');$('more').hidden=true;}
+  }catch(e){$('note').textContent='Could not load this list. Check your connection and TMDB key.';$('more').hidden=true;}
 }
 
 async function loadGenres(){
   const sel=$('genre');sel.innerHTML='<option value="">All genres</option>';
-  if(tab==='free'||tab==='anime'||!HAS_KEY)return;
+  if(tab==='anime'||!HAS_KEY)return;
   try{
     if(!genreCache[tab])genreCache[tab]=(await tmdb('/genre/'+tab+'/list')).genres;
     genreCache[tab].forEach(x=>{const o=document.createElement('option');o.value=x.id;o.textContent=x.name;sel.appendChild(o);});
@@ -491,7 +482,7 @@ function setTab(t){
   tab=t;mode='trending';page=1;query='';genre='';$('q').value='';
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
   $('title').textContent=TITLES[t][0];$('sub').textContent=TITLES[t][1];
-  $('genre').hidden=(t==='free'||t==='anime');$('region').hidden=(t==='free');
+  $('genre').hidden=(t==='anime');$('region').hidden=false;
   loadGenres();load(false);
 }
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.tab)));
@@ -539,55 +530,28 @@ async function openDetail(id,type){
       $('tbox').innerHTML='<iframe class="trailer" title="Trailer" allow="fullscreen; autoplay" allowfullscreen src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(trailer.key)+'?autoplay=1"></iframe>';$('tbtn').hidden=true;});
   }catch(e){$('detail').innerHTML='<p class="msg">Could not load this title.</p>';}
 }
-function openFree(m){
-  current=null;showModal();$('back').style.display='none';
-  $('detail').innerHTML='<h3>'+esc(m.title)+'</h3><div class="chips">'+(m.date?'<span class="chip">'+esc(m.date.slice(0,4))+'</span>':'')+'<span class="chip">Internet Archive</span></div>'+
-    '<iframe class="trailer" style="margin-top:0" title="'+esc(m.title)+'" allow="fullscreen" allowfullscreen src="https://archive.org/embed/'+encodeURIComponent(m.id)+'"></iframe>'+
-    '<p><a style="color:var(--accent)" target="_blank" rel="noopener" href="https://archive.org/details/'+encodeURIComponent(m.id)+'">Open on archive.org ↗</a></p>';
-}
 function closeModal(){$('modal').classList.remove('on');$('detail').innerHTML='';document.body.style.overflow='';current=null;}
 $('close').addEventListener('click',closeModal);
 $('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 
 
-/* ---------- Anime franchises (series + films together, info and legal watch links) ---------- */
-const ANIME=[
- {name:"One Piece",key:"one piece",blurb:"Monkey D. Luffy and his Straw Hat crew sail the Grand Line to find the legendary treasure known as the One Piece. The series and its films, together."},
- {name:"JoJo's Bizarre Adventure",key:"jojo",blurb:"The Joestar family takes on vampires, Stand users and rivals across generations. All the parts, as one whole series."},
- {name:"Naruto",key:"naruto",blurb:"Naruto Uzumaki, an outcast young ninja, dreams of becoming Hokage. Covers Naruto, Naruto Shippuden and the films."},
- {name:"Bleach",key:"bleach",blurb:"Ichigo Kurosaki gains the powers of a Soul Reaper and protects the living from Hollows. Covers the series, the films and Thousand-Year Blood War."}
+/* ---------- Anime: official streaming services ---------- */
+const SERVICES=[
+ {name:'Crunchyroll',url:'https://www.crunchyroll.com/'},
+ {name:'HIDIVE',url:'https://www.hidive.com/'},
+ {name:'Netflix',url:'https://www.netflix.com/'},
+ {name:'Prime Video',url:'https://www.primevideo.com/'},
+ {name:'Disney+',url:'https://www.disneyplus.com/'},
+ {name:'Hulu',url:'https://www.hulu.com/'}
 ];
-const animeCache={};
-async function animeInfo(a){
-  if(animeCache[a.name])return animeCache[a.name];
-  const ok=r=>(r.results||[]).filter(x=>(x.name||x.title||'').toLowerCase().replace(/[^a-z ]/g,'').indexOf(a.key)>-1);
-  const res=await Promise.all([tmdb('/search/tv',{query:a.name}),tmdb('/search/movie',{query:a.name})]);
-  return animeCache[a.name]={tv:ok(res[0]).slice(0,6),movies:ok(res[1]).slice(0,12)};
-}
+let svcShown=[];
 function renderAnime(){
-  const list=ANIME.map((a,i)=>({a:a,i:i})).filter(x=>!query||x.a.name.toLowerCase().indexOf(query.toLowerCase())>-1);
-  render(list.map(x=>({id:x.i,type:'anime',title:x.a.name,date:'',poster:'',rating:0})),false);
-  if(!HAS_KEY)return;
-  const cards=$('grid').children;
-  list.forEach((x,j)=>animeInfo(x.a).then(d=>{
-    const p=d.tv[0]&&d.tv[0].poster_path,ph=cards[j]&&cards[j].querySelector('.noposter');
-    if(p&&ph){const im=document.createElement('img');im.className='poster';im.alt='';im.loading='lazy';im.src=IMG+'w342'+p;ph.replaceWith(im);}
-  }).catch(()=>{}));
+  const all=SERVICES.concat([{name:'Find any anime on JustWatch',url:'https://www.justwatch.com/'+$('region').value.toLowerCase()}]);
+  svcShown=query?all.filter(x=>x.name.toLowerCase().indexOf(query.toLowerCase())>-1):all;
+  render(svcShown.map((x,i)=>({id:i,type:'anime',title:x.name,date:'',poster:'',rating:0})),false);
 }
-async function openAnime(i){
-  const a=ANIME[i];current=null;showModal();$('back').style.display='none';
-  const jw='https://www.justwatch.com/'+$('region').value.toLowerCase()+'/search?q='+encodeURIComponent(a.name);
-  $('detail').innerHTML='<h3>'+esc(a.name)+'</h3><div class="chips"><span class="chip">Anime</span><span class="chip">Series + films</span></div><p>'+esc(a.blurb)+'</p>'+
-    '<p><a style="color:var(--accent)" target="_blank" rel="noopener" href="'+esc(jw)+'">Find where to watch it legally (JustWatch) ↗</a></p><div id="aextra"></div>';
-  if(!HAS_KEY){$('aextra').innerHTML='<p class="msg" style="padding:0">Add your TMDB key to see every series and film of this franchise, with trailers and streaming info.</p>';return;}
-  try{
-    const d=await animeInfo(a);
-    const mk=(arr,t)=>arr.map(x=>'<button class="chip alink" data-id="'+x.id+'" data-type="'+t+'">'+esc(x.name||x.title)+'</button>').join('');
-    $('aextra').innerHTML=(d.tv.length?'<div class="grp">Series</div><div class="chips">'+mk(d.tv,'tv')+'</div>':'')+(d.movies.length?'<div class="grp">Films</div><div class="chips">'+mk(d.movies,'movie')+'</div>':'');
-    $('aextra').querySelectorAll('.alink').forEach(b=>b.addEventListener('click',()=>openDetail(b.dataset.id,b.dataset.type)));
-  }catch(e){$('aextra').innerHTML='<p class="msg" style="padding:0">Could not load the full list right now.</p>';}
-}
+function openService(i){const s=svcShown[i];if(s)window.open(s.url,'_blank','noopener');}
 
 /* ---------- Start ---------- */
 setTab(tab);
